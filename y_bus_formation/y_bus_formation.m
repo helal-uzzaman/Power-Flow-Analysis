@@ -9,8 +9,7 @@ clear
 clc
 
 % Read data from the Excel file named "givenData" into a matrix A
-cd("/Users/helaluzzaman/Desktop/lab 3.2/power system/lab 4 ybusGen")
-A = xlsread("givenData2");
+A = xlsread("givenData");
 
 % Display the given data
 disp("Given data: ")
