@@ -1,21 +1,21 @@
 % Load Flow Analysis using Newton Raphson method
 % Data given in two Excel file
 % Author: Helal Uzzaman Hasib
-% Date: 15 Dec 2023
+% Date: 15 Dec 2023     || This for testing result
 % ===========================================================
 
 % Clear the workspace and command window
 clear
 clc
 maxIter = 20;      tol = 0.00001;
+format compact
 
 % Data Loading from Excel File
-A = xlsread('givenDataYbusExBook');
-A = xlsread('givenDataYbusLab');
+A = xlsread('ex_impedence_data_5_bus');
 disp('Given Impedance data from Excel file: ');      disp(A);
 
-B = xlsread('loadFlowExBook');
-B = xlsread('loadFlowLab');
+
+B = xlsread('ex_pv_data_5_bus');
 disp('Load flow data from Excel file: ');             disp(B)
 % ===================== Y-Bus formation ======================
 n = size(A,1);
@@ -224,24 +224,24 @@ for iteration = 1: maxIter
         end
     end
 end
-% Output Decoration for Generalized
-Iter = (1: iteration)';
-for i=1: n
-    eval(['V' num2str(i) '=Voltage.Mag(:,i);']);
-    eval(['A' num2str(i) '=Voltage.Angle(:,i);']);
-end
-T = table(Iter, V1,V2, V3, A1,A2,A3);   
-
-disp('Calculated Bus voltage|here V -> magnitude(volt) & A -> Angle(deg)|All in PU:');
-disp(T);
-
-
-
-% % Output Decoration for Generalized
+% Output Decoration for Not  Generalized
 % Iter = (1: iteration)';
-% T = table(Iter, Voltage.Mag, Voltage.Angle);
-% T.Properties.VariableNames = {'Iter', 'Voltage', 'Angle'};
+% for i=1: n
+%     eval(['V' num2str(i) '=Voltage.Mag(:,i);']);
+%     eval(['A' num2str(i) '=Voltage.Angle(:,i);']);
+% end
+% T = table(Iter, V1,V2, V3, A1,A2,A3);   
+% 
+% disp('Calculated Bus voltage|here V -> magnitude(volt) & A -> Angle(deg)|All in PU:');
 % disp(T);
-% disp('Voltage(Volt) are V1, V2, V3,... and Angle(Degree) are A1, A2, A3, ....')
-% disp('All in Per-Unit');
+
+
+
 % % Output Decoration for Generalized
+Iter = (1: iteration)';
+T = table(Iter, Voltage.Mag, Voltage.Angle);
+T.Properties.VariableNames = {'Iter', 'Voltage', 'Angle'};
+disp(T);
+disp('Voltage(Volt) are V1, V2, V3,... and Angle(Degree) are A1, A2, A3, ....')
+disp('All in Per-Unit');
+% Output Decoration for Generalized

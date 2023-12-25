@@ -7,7 +7,6 @@
 % Clear the workspace and command window
 clear
 clc
-% cd('F:\1901017\power system\lab4')
 A = xlsread('givenDataYbusReduction');
 disp('Given data in Excel: ');
 disp(A);

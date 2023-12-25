@@ -7,11 +7,19 @@
 % Clear the workspace and command window
 clear
 clc
-maxIter = 100;      tol = 0.00001;
-%===================== Y-Bus formation ======================
-% cd('F:\1901017\power system\lab4')
-A = xlsread('givenDataYbusLab');
+maxIter = 100;      tol = 0.0001;
+% Data Loading from Excel File
+% cd('example_6.8');
+A = xlsread('ex_impedence_data_5_bus');
 disp('Given Impedance data from Excel file: ');      disp(A);
+
+
+B = xlsread('ex_pv_data_5_bus');
+disp('Load flow data from Excel file: ');             disp(B)
+% cd ..
+
+%===================== Y-Bus formation ======================
+
 n = size(A,1);
 for j=1:n
     z(A(j,2), A(j,3)) = A(j,4) + A(j,5)*1i;
@@ -37,15 +45,13 @@ for m=1:n
 end
 disp('Y-Bus matrix: ');   disp(y);    Ybus  = y;
 %=================== Gauss Seidel Method ====================
-B = xlsread('loadFlowLab');
-disp('Load flow data from Excel file: ');             disp(B)
+
 n = size(B, 1);
 % formating complex power from given data
 % load flow data extraction
 PGCOL = 3; QGCOL = 4;
 PLCOL = 5; QLCOL = 6;
 % formating complex power from given data
-s = (B(:,PGCOL)+1i*B(:, QGCOL)) - (B(:,PLCOL)+1i* B(:,QLCOL));
 P = (B(:,PGCOL) - B(:,PLCOL));
 Q = 1i *(B(:, QGCOL) -  B(:,QLCOL));
 
@@ -75,33 +81,7 @@ v = v';
 
 
 for iteration = 1: maxIter
-    % Q calculation if any PV or Generator bus
-    for ii= Gen
-        sum = 0;
-        for k=1: n
-            sum = sum+ v(ii)*Ybus(ii,k)*v(k);
-        end
-        Q(ii) = i*imag(sum) ; % updating Q 
-    end
-
-    % calculate for gen buses
     
-    for j=Gen
-        sum = 0;
-        for k = 1: n
-            if (j ~= k)
-                sum = sum + Ybus(j, k)*v(k);
-            end
-        end
-        % main formula implementation of Gauss-Seidel Method
-        newV = 1/Ybus(j,j)* (P(j)-Q(j)/ conj(v(j)) -sum);
-        % Only imaginary part should be retained. |V| MUST HELD CONSTANT
-        % SO REAL PART SHOULD BE CALCULATED.
-        realPart = sqrt(abs(v(j))^2 - imag(newV)^2);
-        v(j) = realPart + i* imag(newV);
-        
-    end 
-
     % calculate for load buses 
     for j=Load
         sum = 0;
@@ -111,8 +91,37 @@ for iteration = 1: maxIter
             end
         end
         % main formula implementation of Gauss-Seidel Method
-        v(j) = 1/Ybus(j,j)* (P(j)-Q(j)/ conj(v(j)) -sum);
+        v(j) = 1/Ybus(j,j)* ((P(j)-Q(j))/ conj(v(j)) -sum);
     end 
+    
+    % calculation for generator (PV) buses
+
+    
+    for j=Gen
+        % Q calculation 
+        I = 0;
+        for k=1: n
+            I = I+ Ybus(j,k)*v(k);
+        end
+        Q(j) = 1i* imag(v(j)*conj(I));  % updating Q  working
+        
+        sum = 0;
+        for k = 1: n
+            if (j ~= k)
+                sum = sum + Ybus(j, k)*v(k);
+            end
+        end
+        % main formula implementation of Gauss-Seidel Method
+  
+        newV = 1/Ybus(j,j) * ( ((P(j)-Q(j))/ conj(v(j)) - sum));  %  working
+        % Only imaginary part should be retained. |V| MUST HELD CONSTANT
+        % SO REAL PART SHOULD BE CALCULATED.
+        realPart = sqrt(abs(v(j))^2 - imag(newV)^2);    % working
+        v(j) = realPart + i* imag(newV);     % working
+        % using angle 
+    end 
+
+    
     voltage(iteration,:) = v;
     
     % check iter > 1
@@ -126,12 +135,13 @@ for iteration = 1: maxIter
  
 end
 Vmag = abs(voltage);                Vangle = rad2deg(angle(voltage));
-% Output Decoration for Generalized
+% % Output Decoration for Generalized
 Iter = (1: iteration)';
 for i=1: n
     eval(['V' num2str(i) '=Vmag(:,i);']);
     eval(['A' num2str(i) '=Vangle(:,i);']);
 end
-T = table(Iter, V1,V2, V3, V4, V5, A1,A2,A3, A4, A5);   
+T = table(Iter, V1, A1, V2, A2, V3, A3, V4, A4, V5 , A5);  
+% T = table(Iter, V1, A1, V2, A2, V3, A3);  
 disp('Calculated Bus voltage|here V -> magnitude(volt) & A -> Angle(deg)|All in PU:'); disp(T);
 
