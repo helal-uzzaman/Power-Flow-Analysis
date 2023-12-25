@@ -1,0 +1,217 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>y_bus_formation</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-12-25"><meta name="DC.source" content="y_bus_formation.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Formation of Y Bus Matrix through Matlab Code</span>
+<span class="comment">% Data given in an Excel file</span>
+<span class="comment">% Author: Helal Uzzaman Hasib</span>
+<span class="comment">% Date: 23 Oct 2023</span>
+<span class="comment">% ===========================================================</span>
+
+<span class="comment">% Clear the workspace and command window</span>
+clear
+clc
+
+<span class="comment">% Read data from the Excel file named "givenData" into a matrix A</span>
+A = xlsread(<span class="string">"givenData"</span>);
+
+<span class="comment">% Display the given data</span>
+disp(<span class="string">"Given data: "</span>)
+disp(A)
+
+<span class="comment">% Get the number of rows in the data</span>
+n = size(A,1);
+
+
+<span class="comment">% Construct impedance matrix from given data (excel data)</span>
+<span class="keyword">for</span> i = 1:n
+    <span class="comment">% Extract data from the ith row of A and convert to complex impedance</span>
+    <span class="comment">% Populate the impedance matrix Z with impedance values</span>
+    Z(A(i, 2), A(i, 3)) = A(i, 4) + 1i * A(i, 5);
+
+    <span class="comment">% Since the impedance matrix is symmetric, populate both Z(i,j) and Z(j,i)</span>
+    Z(A(i, 3), A(i, 2)) = A(i, 4) + 1i * A(i, 5);
+<span class="keyword">end</span>
+
+<span class="comment">% Get the number of rows in the impedance matrix</span>
+n = length(Z);
+
+<span class="comment">% Replace zero values in the impedance matrix with 'inf'</span>
+<span class="keyword">for</span> i = 1:n
+    <span class="keyword">for</span> j = 1:n
+        <span class="keyword">if</span> Z(i, j) == 0
+            Z(i, j) = inf;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% Calculate the admittance matrix Y by taking the reciprocal of Z</span>
+Y = 1./Z;
+
+<span class="comment">% Calculate the sum of admittances connected to each node</span>
+S = sum(Y);
+
+<span class="comment">% Populate the Y Bus matrix</span>
+<span class="keyword">for</span> i = 1:n
+    <span class="keyword">for</span> j = 1:n
+        <span class="keyword">if</span> i == j
+            <span class="comment">% Setting the diagonal elements of Y Bus matrix</span>
+            Y(i, j) = S(i);
+        <span class="keyword">else</span>
+            <span class="comment">% Setting the off-diagonal elements of Y Bus matrix</span>
+            Y(i, j) = -Y(i, j);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% Display the Y Bus matrix</span>
+disp(<span class="string">'Y-Bus matrix is : '</span>);
+disp(Y)
+</pre><pre class="codeoutput">Given data: 
+    1.0000    1.0000    1.0000         0    0.8000
+    2.0000    1.0000    2.0000         0    0.0500
+    3.0000    1.0000    3.0000         0    0.0900
+    4.0000    2.0000    2.0000         0    0.9000
+    5.0000    2.0000    3.0000         0    0.0300
+    6.0000    3.0000    4.0000         0    0.6000
+
+Y-Bus matrix is : 
+   0.0000 -32.3611i   0.0000 +20.0000i   0.0000 +11.1111i   0.0000 + 0.0000i
+   0.0000 +20.0000i   0.0000 -54.4444i   0.0000 +33.3333i   0.0000 + 0.0000i
+   0.0000 +11.1111i   0.0000 +33.3333i   0.0000 -46.1111i   0.0000 + 1.6667i
+   0.0000 + 0.0000i   0.0000 + 0.0000i   0.0000 + 1.6667i   0.0000 - 1.6667i
+
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% Formation of Y Bus Matrix through Matlab Code
+% Data given in an Excel file
+% Author: Helal Uzzaman Hasib
+% Date: 23 Oct 2023
+% ===========================================================
+
+% Clear the workspace and command window
+clear
+clc
+
+% Read data from the Excel file named "givenData" into a matrix A
+A = xlsread("givenData");
+
+% Display the given data
+disp("Given data: ")
+disp(A)
+
+% Get the number of rows in the data
+n = size(A,1);
+
+
+% Construct impedance matrix from given data (excel data)
+for i = 1:n
+    % Extract data from the ith row of A and convert to complex impedance
+    % Populate the impedance matrix Z with impedance values
+    Z(A(i, 2), A(i, 3)) = A(i, 4) + 1i * A(i, 5);
+    
+    % Since the impedance matrix is symmetric, populate both Z(i,j) and Z(j,i)
+    Z(A(i, 3), A(i, 2)) = A(i, 4) + 1i * A(i, 5);
+end
+
+% Get the number of rows in the impedance matrix
+n = length(Z);
+
+% Replace zero values in the impedance matrix with 'inf'
+for i = 1:n
+    for j = 1:n
+        if Z(i, j) == 0
+            Z(i, j) = inf;
+        end
+    end
+end
+
+% Calculate the admittance matrix Y by taking the reciprocal of Z
+Y = 1./Z;
+
+% Calculate the sum of admittances connected to each node
+S = sum(Y);
+
+% Populate the Y Bus matrix
+for i = 1:n
+    for j = 1:n
+        if i == j
+            % Setting the diagonal elements of Y Bus matrix
+            Y(i, j) = S(i);
+        else
+            % Setting the off-diagonal elements of Y Bus matrix
+            Y(i, j) = -Y(i, j);
+        end
+    end
+end
+
+% Display the Y Bus matrix
+disp('Y-Bus matrix is : ');
+disp(Y)
+
+##### SOURCE END #####
+--></body></html>
