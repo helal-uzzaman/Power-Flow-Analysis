@@ -1,0 +1,425 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gaussSeidelFull</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-12-29"><meta name="DC.source" content="gaussSeidelFull.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% Load Flow Analysis using Gauss Seidel method</span>
+<span class="comment">% Data given in two Excel file</span>
+<span class="comment">% Author: Helal Uzzaman Hasib</span>
+<span class="comment">% Date: 23 Oct 2023      Edited: 15 Dec 2023</span>
+<span class="comment">% ===========================================================</span>
+
+<span class="comment">% Clear the workspace and command window</span>
+clear
+clc
+maxIter = 100;      tol = 0.0001;
+<span class="comment">% Data Loading from Excel File</span>
+<span class="comment">% cd('example_6.8');</span>
+A = xlsread(<span class="string">'ex_impedence_data_5_bus'</span>);
+disp(<span class="string">'Given Impedance data from Excel file: '</span>);      disp(A);
+
+
+B = xlsread(<span class="string">'ex_pv_data_5_bus'</span>);
+disp(<span class="string">'Load flow data from Excel file: '</span>);             disp(B)
+<span class="comment">% cd ..</span>
+
+<span class="comment">%===================== Y-Bus formation ======================</span>
+
+n = size(A,1);
+<span class="keyword">for</span> j=1:n
+    z(A(j,2), A(j,3)) = A(j,4) + A(j,5)*1i;
+    z(A(j,3), A(j,2)) = A(j,4) + A(j,5)*1i;
+<span class="keyword">end</span>
+n = length(z);
+<span class="keyword">for</span> m=1:n
+    <span class="keyword">for</span> j=1:n
+        <span class="keyword">if</span> z(m,j) ==0
+            z(m,j) = inf;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+y = 1./z;           s = sum(y);
+<span class="keyword">for</span> m=1:n
+    <span class="keyword">for</span> j=1:n
+        <span class="keyword">if</span> m==j
+            y(m,j)= s(m);
+        <span class="keyword">else</span>
+            y(m,j)= -y(m,j);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+disp(<span class="string">'Y-Bus matrix: '</span>);   disp(y);    Ybus  = y;
+<span class="comment">%=================== Gauss Seidel Method ====================</span>
+
+n = size(B, 1);
+<span class="comment">% formating complex power from given data</span>
+<span class="comment">% load flow data extraction</span>
+PGCOL = 3; QGCOL = 4;
+PLCOL = 5; QLCOL = 6;
+<span class="comment">% formating complex power from given data</span>
+P = (B(:,PGCOL) - B(:,PLCOL));
+Q = 1i *(B(:, QGCOL) -  B(:,QLCOL));
+
+Vangle = deg2rad(B(:,7));   <span class="comment">% voltage angle --&gt; Vangle</span>
+v = B(:,2).*(cos(Vangle) + 1i*sin(Vangle));   <span class="comment">% taking initial voltage values</span>
+
+
+<span class="comment">% iterate and find load and gen bus</span>
+l = 1; g = 1; Load = []; Gen = [];
+<span class="keyword">for</span> bus = 2: n
+    <span class="keyword">if</span> (B(bus, PGCOL) == 0 &amp;&amp; B(bus, QGCOL)==0)   <span class="comment">% checking if load bus</span>
+        Load(l) = bus;
+        l = l+1;
+    <span class="keyword">elseif</span> (B(bus, PGCOL) &gt; 0 &amp;&amp; B(bus, QGCOL)==0) <span class="comment">% checking if gen bus</span>
+        Gen(g) = bus;
+        g = g+1;
+    <span class="keyword">else</span>
+        error(<span class="string">'proper data not found for identify load and generator bus'</span>);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+fprintf(<span class="string">'Load bus Number: '</span>); disp(Load);
+fprintf(<span class="string">'Generator bus Number: '</span>); disp(Gen);
+fprintf(<span class="string">'\n'</span>)
+
+v = v';
+
+
+
+<span class="keyword">for</span> iteration = 1: maxIter
+
+    <span class="comment">% calculate for load buses</span>
+    <span class="keyword">for</span> j=Load
+        sum = 0;
+        <span class="keyword">for</span> k = 1: n
+            <span class="keyword">if</span> (j ~= k)
+                sum = sum + Ybus(j, k)*v(k);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="comment">% main formula implementation of Gauss-Seidel Method</span>
+        v(j) = 1/Ybus(j,j)* ((P(j)-Q(j))/ conj(v(j)) -sum);
+    <span class="keyword">end</span>
+
+    <span class="comment">% calculation for generator (PV) buses</span>
+
+
+    <span class="keyword">for</span> j=Gen
+        <span class="comment">% Q calculation</span>
+        I = 0;
+        <span class="keyword">for</span> k=1: n
+            I = I+ Ybus(j,k)*v(k);
+        <span class="keyword">end</span>
+        Q(j) = 1i* imag(v(j)*conj(I));  <span class="comment">% updating Q  working</span>
+
+        sum = 0;
+        <span class="keyword">for</span> k = 1: n
+            <span class="keyword">if</span> (j ~= k)
+                sum = sum + Ybus(j, k)*v(k);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="comment">% main formula implementation of Gauss-Seidel Method</span>
+
+        newV = 1/Ybus(j,j) * ( ((P(j)-Q(j))/ conj(v(j)) - sum));  <span class="comment">%  working</span>
+        <span class="comment">% Only imaginary part should be retained. |V| MUST HELD CONSTANT</span>
+        <span class="comment">% SO REAL PART SHOULD BE CALCULATED.</span>
+        realPart = sqrt(abs(v(j))^2 - imag(newV)^2);    <span class="comment">% working</span>
+        v(j) = realPart + i* imag(newV);     <span class="comment">% working</span>
+        <span class="comment">% using angle</span>
+    <span class="keyword">end</span>
+
+
+    voltage(iteration,:) = v;
+
+    <span class="comment">% check iter &gt; 1</span>
+    <span class="keyword">if</span> iteration &gt; 1
+        diff = abs ( max(voltage(iteration,:)- voltage(iteration-1,:)));
+        <span class="keyword">if</span> diff&lt; tol
+            fprintf(<span class="string">'\nConverged At %d No. iteration. Tolerance: %f\n'</span>,iteration, tol);
+            <span class="keyword">break</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+Vmag = abs(voltage);                Vangle = rad2deg(angle(voltage));
+<span class="comment">% % Output Decoration for Generalized</span>
+Iter = (1: iteration)';
+<span class="keyword">for</span> i=1: n
+    eval([<span class="string">'V'</span> num2str(i) <span class="string">'=Vmag(:,i);'</span>]);
+    eval([<span class="string">'A'</span> num2str(i) <span class="string">'=Vangle(:,i);'</span>]);
+<span class="keyword">end</span>
+T = table(Iter, V1, A1, V2, A2, V3, A3, V4, A4, V5 , A5);
+<span class="comment">% T = table(Iter, V1, A1, V2, A2, V3, A3);</span>
+disp(<span class="string">'Calculated Bus voltage|here V -&gt; magnitude(volt) &amp; A -&gt; Angle(deg)|All in PU:'</span>); disp(T);
+</pre><pre class="codeoutput">Given Impedance data from Excel file: 
+    1.0000    1.0000    2.0000    0.0420    0.1680
+    2.0000    1.0000    5.0000    0.0310    0.1260
+    3.0000    2.0000    3.0000    0.0310    0.1260
+    4.0000    3.0000    4.0000    0.0840    0.3360
+    5.0000    3.0000    5.0000    0.0530    0.2100
+    6.0000    4.0000    5.0000    0.0630    0.2520
+
+Load flow data from Excel file: 
+    1.0000    1.0400         0         0    0.6500    0.3000         0
+    2.0000    1.0000         0         0    1.1500    0.6000         0
+    3.0000    1.0200    1.8000         0    0.7000    0.4000         0
+    4.0000    1.0000         0         0    0.7000    0.3000         0
+    5.0000    1.0000         0         0    0.8500    0.4000         0
+
+Y-Bus matrix: 
+  Columns 1 through 4
+
+   3.2417 -13.0858i  -1.4006 + 5.6022i   0.0000 + 0.0000i   0.0000 + 0.0000i
+  -1.4006 + 5.6022i   3.2417 -13.0858i  -1.8412 + 7.4835i   0.0000 + 0.0000i
+   0.0000 + 0.0000i  -1.8412 + 7.4835i   3.6713 -14.7614i  -0.7003 + 2.8011i
+   0.0000 + 0.0000i   0.0000 + 0.0000i  -0.7003 + 2.8011i   1.6340 - 6.5359i
+  -1.8412 + 7.4835i   0.0000 + 0.0000i  -1.1298 + 4.4768i  -0.9337 + 3.7348i
+
+  Column 5
+
+  -1.8412 + 7.4835i
+   0.0000 + 0.0000i
+  -1.1298 + 4.4768i
+  -0.9337 + 3.7348i
+   3.9047 -15.6951i
+
+Load bus Number:      2     4     5
+
+Generator bus Number:      3
+
+
+
+Converged At 15 No. iteration. Tolerance: 0.000100
+Calculated Bus voltage|here V -&gt; magnitude(volt) &amp; A -&gt; Angle(deg)|All in PU:
+    Iter     V1     A1      V2         A2        V3        A3         V4         A4         V5         A5   
+    ____    ____    __    _______    _______    ____    ________    _______    _______    _______    _______
+
+      1     1.04    0     0.96754    -4.2724    1.02    -0.78965    0.94447    -5.4681    0.97613    -3.9063
+      2     1.04    0     0.96041    -4.6238    1.02     -1.7944    0.92192    -8.2307    0.96653    -4.6851
+      3     1.04    0     0.96009    -5.2421    1.02     -2.4899    0.91156    -9.1398    0.96319    -5.1807
+      4     1.04    0     0.95965    -5.6231    1.02     -2.9466     0.9083    -9.7775    0.96192    -5.5209
+      5     1.04    0     0.95936    -5.8761    1.02      -3.242    0.90691    -10.175    0.96127    -5.7369
+      6     1.04    0     0.95915    -6.0394    1.02     -3.4316    0.90618    -10.426     0.9609    -5.8749
+      7     1.04    0     0.95901    -6.1443    1.02     -3.5532    0.90577    -10.585    0.96067    -5.9632
+      8     1.04    0     0.95892    -6.2115    1.02     -3.6311    0.90551    -10.687    0.96053    -6.0196
+      9     1.04    0     0.95886    -6.2547    1.02     -3.6811    0.90535    -10.752    0.96044    -6.0558
+     10     1.04    0     0.95882    -6.2823    1.02     -3.7132    0.90525    -10.794    0.96038     -6.079
+     11     1.04    0     0.95879    -6.3001    1.02     -3.7338    0.90518    -10.821    0.96034    -6.0939
+     12     1.04    0     0.95878    -6.3115    1.02      -3.747    0.90514    -10.838    0.96032    -6.1034
+     13     1.04    0     0.95877    -6.3188    1.02     -3.7555    0.90511    -10.849     0.9603    -6.1096
+     14     1.04    0     0.95876    -6.3235    1.02     -3.7609    0.90509    -10.856    0.96029    -6.1135
+     15     1.04    0     0.95876    -6.3265    1.02     -3.7644    0.90508    -10.861    0.96028     -6.116
+
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% Load Flow Analysis using Gauss Seidel method
+% Data given in two Excel file
+% Author: Helal Uzzaman Hasib
+% Date: 23 Oct 2023      Edited: 15 Dec 2023
+% ===========================================================
+
+% Clear the workspace and command window
+clear
+clc
+maxIter = 100;      tol = 0.0001;
+% Data Loading from Excel File
+% cd('example_6.8');
+A = xlsread('ex_impedence_data_5_bus');
+disp('Given Impedance data from Excel file: ');      disp(A);
+
+
+B = xlsread('ex_pv_data_5_bus');
+disp('Load flow data from Excel file: ');             disp(B)
+% cd ..
+
+%===================== Y-Bus formation ======================
+
+n = size(A,1);
+for j=1:n
+    z(A(j,2), A(j,3)) = A(j,4) + A(j,5)*1i;
+    z(A(j,3), A(j,2)) = A(j,4) + A(j,5)*1i;
+end
+n = length(z);
+for m=1:n
+    for j=1:n
+        if z(m,j) ==0
+            z(m,j) = inf;
+        end
+    end
+end
+y = 1./z;           s = sum(y);
+for m=1:n
+    for j=1:n
+        if m==j
+            y(m,j)= s(m);
+        else
+            y(m,j)= -y(m,j);
+        end
+    end
+end
+disp('Y-Bus matrix: ');   disp(y);    Ybus  = y;
+%=================== Gauss Seidel Method ====================
+
+n = size(B, 1);
+% formating complex power from given data
+% load flow data extraction
+PGCOL = 3; QGCOL = 4;
+PLCOL = 5; QLCOL = 6;
+% formating complex power from given data
+P = (B(:,PGCOL) - B(:,PLCOL));
+Q = 1i *(B(:, QGCOL) -  B(:,QLCOL));
+
+Vangle = deg2rad(B(:,7));   % voltage angle REPLACE_WITH_DASH_DASH> Vangle
+v = B(:,2).*(cos(Vangle) + 1i*sin(Vangle));   % taking initial voltage values
+
+
+% iterate and find load and gen bus
+l = 1; g = 1; Load = []; Gen = [];
+for bus = 2: n
+    if (B(bus, PGCOL) == 0 && B(bus, QGCOL)==0)   % checking if load bus
+        Load(l) = bus;
+        l = l+1;
+    elseif (B(bus, PGCOL) > 0 && B(bus, QGCOL)==0) % checking if gen bus
+        Gen(g) = bus;
+        g = g+1;
+    else
+        error('proper data not found for identify load and generator bus');
+    end
+end
+fprintf('Load bus Number: '); disp(Load);
+fprintf('Generator bus Number: '); disp(Gen);
+fprintf('\n')
+
+v = v';   
+
+
+
+for iteration = 1: maxIter
+    
+    % calculate for load buses 
+    for j=Load
+        sum = 0;
+        for k = 1: n
+            if (j ~= k)
+                sum = sum + Ybus(j, k)*v(k);
+            end
+        end
+        % main formula implementation of Gauss-Seidel Method
+        v(j) = 1/Ybus(j,j)* ((P(j)-Q(j))/ conj(v(j)) -sum);
+    end 
+    
+    % calculation for generator (PV) buses
+
+    
+    for j=Gen
+        % Q calculation 
+        I = 0;
+        for k=1: n
+            I = I+ Ybus(j,k)*v(k);
+        end
+        Q(j) = 1i* imag(v(j)*conj(I));  % updating Q  working
+        
+        sum = 0;
+        for k = 1: n
+            if (j ~= k)
+                sum = sum + Ybus(j, k)*v(k);
+            end
+        end
+        % main formula implementation of Gauss-Seidel Method
+  
+        newV = 1/Ybus(j,j) * ( ((P(j)-Q(j))/ conj(v(j)) - sum));  %  working
+        % Only imaginary part should be retained. |V| MUST HELD CONSTANT
+        % SO REAL PART SHOULD BE CALCULATED.
+        realPart = sqrt(abs(v(j))^2 - imag(newV)^2);    % working
+        v(j) = realPart + i* imag(newV);     % working
+        % using angle 
+    end 
+
+    
+    voltage(iteration,:) = v;
+    
+    % check iter > 1
+    if iteration > 1
+        diff = abs ( max(voltage(iteration,:)- voltage(iteration-1,:)));
+        if diff< tol
+            fprintf('\nConverged At %d No. iteration. Tolerance: %f\n',iteration, tol);
+            break
+        end
+    end
+ 
+end
+Vmag = abs(voltage);                Vangle = rad2deg(angle(voltage));
+% % Output Decoration for Generalized
+Iter = (1: iteration)';
+for i=1: n
+    eval(['V' num2str(i) '=Vmag(:,i);']);
+    eval(['A' num2str(i) '=Vangle(:,i);']);
+end
+T = table(Iter, V1, A1, V2, A2, V3, A3, V4, A4, V5 , A5);  
+% T = table(Iter, V1, A1, V2, A2, V3, A3);  
+disp('Calculated Bus voltage|here V -> magnitude(volt) & A -> Angle(deg)|All in PU:'); disp(T);
+
+
+##### SOURCE END #####
+--></body></html>
