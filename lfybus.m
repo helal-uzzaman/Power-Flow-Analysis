@@ -1,7 +1,7 @@
-function r = ybus(A)
+function r = lfybus(A)
 % Formation of Y Bus Matrix through Matlab Code
 % Author: Helal Uzzaman Hasib
-% Date: 23 Dec 2023
+% Date: 30 Dec 2023
 % function give matrix of data containig [ Bus Bus R X; ]
 % Output will be a matrix of Ybus
 

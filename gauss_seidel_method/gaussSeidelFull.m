@@ -10,11 +10,11 @@ clc
 maxIter = 100;      tol = 0.0001;
 % Data Loading from Excel File
 % cd('example_6.8');
-A = xlsread('ex_impedence_data_5_bus');
+A = xlsread('ex_impedence_data_3_bus');
 disp('Given Impedance data from Excel file: ');      disp(A);
 
 
-B = xlsread('ex_pv_data_5_bus');
+B = xlsread('ex_pv_data_3_bus');
 disp('Load flow data from Excel file: ');             disp(B)
 % cd ..
 
@@ -134,6 +134,7 @@ for iteration = 1: maxIter
     end
  
 end
+voltage
 Vmag = abs(voltage);                Vangle = rad2deg(angle(voltage));
 % % Output Decoration for Generalized
 Iter = (1: iteration)';
@@ -141,7 +142,7 @@ for i=1: n
     eval(['V' num2str(i) '=Vmag(:,i);']);
     eval(['A' num2str(i) '=Vangle(:,i);']);
 end
-T = table(Iter, V1, A1, V2, A2, V3, A3, V4, A4, V5 , A5);  
-% T = table(Iter, V1, A1, V2, A2, V3, A3);  
+% T = table(Iter, V1, A1, V2, A2, V3, A3, V4, A4, V5 , A5);  
+T = table(Iter, V1, A1, V2, A2, V3, A3);  
 disp('Calculated Bus voltage|here V -> magnitude(volt) & A -> Angle(deg)|All in PU:'); disp(T);
 
