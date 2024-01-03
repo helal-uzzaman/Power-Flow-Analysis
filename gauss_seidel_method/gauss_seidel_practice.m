@@ -1,4 +1,4 @@
-% Load Flow Analysis using Gauss Seidel method
+% Load Flow Analysis using Gauss Seidel ONLY FOR PQ bus method
 % Data given in two Excel file
 % Author: Helal Uzzaman Hasib
 % Date: 23 Oct 2023      Edited: 15 Dec 2023
@@ -9,7 +9,7 @@ clear
 clc
 maxIter = 10;      tol = 0.0001;
 % Data Loading from Excel File
-cd('example_6.7');
+cd('example_6.8');
 A = xlsread('impedence_data');
 disp('Given Impedance data from Excel file: ');      disp(A);
 

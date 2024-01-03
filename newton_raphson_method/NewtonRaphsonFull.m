@@ -90,6 +90,7 @@ for iteration = 1: maxIter
         pcal(k) = 0;
         qcal(k) = 0;
         for l = 1: n
+            % may be no need for if check
             if k == l
                 pcal(k) = pcal(k)+ (Vmag(k)^2)*Ymag(k,k)*cos(theta(k,k));
                 qcal(k) = qcal(k) - (Vmag(k)^2)*Ymag(k,k)*sin(theta(k,k));

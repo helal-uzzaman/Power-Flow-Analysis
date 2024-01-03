@@ -9,19 +9,15 @@ clear
 clc
 maxIter = 100;      tol = 0.0001;
 % Data Loading from Excel File
-cd('example_6.7');
+cd('example_6.8');
 A = xlsread('impedence_data');
 disp('Given Impedance data from Excel file: ');      disp(A);
-
-
 B = xlsread('bus_data');
 disp('Load flow data from Excel file: ');             disp(B)
 cd ..
 ybus = lfybus(A);
 ybus
-
 % bus data [ Bus Voltage Pg Qg Pl Ql angle ] extraction 
-
 vmag = B(:,2); %voltage mag
 vangle = deg2rad(B(: ,7)); % voltage in rad
 v= vmag.*( cos(vangle) + 1i* sin(vangle)); 
@@ -39,14 +35,9 @@ pvbuses = pvbuses'; pqbuses = pqbuses';   % important for -> for loop
 fprintf('pq busses are : ');   disp(pqbuses);
 fprintf('pv busses are : ');   disp(pvbuses);
 
-
-
-% n->  total bus number 
-n = size(ybus,1);
-
+n = size(ybus,1);     % n->  total bus number 
 for iter= 1: maxIter
-    % calculation for pv buses
-    for j = pvbuses
+    for j = pvbuses            % calculation for pv buses
         % q calculation
         I = 0;
         for k = 1: n
@@ -66,11 +57,8 @@ for iter= 1: maxIter
         % only angle should be updated   
         theta = angle(vnew);
         v(j) = abs(v(j))*( cos(theta) + 1i* sin(theta)); 
-%         realPart = sqrt(abs(v(j))^2 - imag(vnew)^2);    % working
-%         v(j) = realPart + i* imag(vnew);     % working
     end
-    % calculation for pq buses 
-    for j = pqbuses
+    for j = pqbuses          % calculation for pq buses 
         sum = 0;
         for k = 1: n
             if j ~=k
@@ -80,10 +68,8 @@ for iter= 1: maxIter
         sconj = (p(j) - 1i*q(j));
         v(j) = 1/ybus(j,j) *(sconj/conj(v(j)) - sum);
     end
-    % storing the value
-    voltage(iter, :) = v;
-    
-    % check iter > 1
+    voltage(iter, :) = v;      % storing the value
+    % Convergence check iter > 1
     if iter > 1
         diff = abs ( max(voltage(iter,:)- voltage(iter-1,:)));
         if diff< tol
