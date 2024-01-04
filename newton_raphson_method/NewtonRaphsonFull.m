@@ -11,11 +11,11 @@ maxIter = 20;      tol = 0.00001;
 
 % Data Loading from Excel File
 A = xlsread('givenDataYbusExBook');
-A = xlsread('givenDataYbusLab');
+% A = xlsread('givenDataYbusLab');
 disp('Given Impedance data from Excel file: ');      disp(A);
 
 B = xlsread('loadFlowExBook');
-B = xlsread('loadFlowLab');
+% B = xlsread('loadFlowLab');
 disp('Load flow data from Excel file: ');             disp(B)
 % ===================== Y-Bus formation ======================
 n = size(A,1);
@@ -241,7 +241,7 @@ disp(T);
 % % Output Decoration for Generalized
 % Iter = (1: iteration)';
 % T = table(Iter, Voltage.Mag, Voltage.Angle);
-% T.Properties.VariableNames = {'Iter', 'Voltage', 'Angle'};
+% T.Propertie   s.VariableNames = {'Iter', 'Voltage', 'Angle'};
 % disp(T);
 % disp('Voltage(Volt) are V1, V2, V3,... and Angle(Degree) are A1, A2, A3, ....')
 % disp('All in Per-Unit');
