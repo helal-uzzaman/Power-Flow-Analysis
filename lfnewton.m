@@ -1,7 +1,7 @@
 % Load Flow Analysis using Newton Raphson method
 % Data given in two Excel file
 % Author: Helal Uzzaman Hasib
-% Date: 15 Dec 2023
+% Date: 15 Dec 2023 Repeat: 04 Jan 2024
 % ===========================================================
 
 % Clear the workspace and command window
@@ -9,7 +9,9 @@ clear
 clc
 maxIter = 20;      tol = 0.0001;
 % Data Loading from Excel File
-cd('example_lab');
+problem = 'example_6.8';
+fprintf('Given problem -->  "%s": \n', problem)
+cd(problem);
 A = xlsread('impedence_data');
 disp('Given Impedance data from Excel file: ');      disp(A);
 
@@ -18,7 +20,7 @@ B = xlsread('bus_data');
 disp('Load flow data from Excel file: ');             disp(B)
 cd ..
 ybus = lfybus(A);
-ybus
+disp(ybus)
 
 % bus data [ Bus Voltage Pg Qg Pl Ql angle ] extraction 
 
@@ -42,8 +44,10 @@ fprintf('pv busses are : ');   disp(pvbuses);
 
 % NR initialize data
 n = length(ybus);
-V = abs(v);     delta = angle(v);
+
 Y = abs(ybus);  theta = angle(ybus);
+V = abs(v);     delta = angle(v);
+
 pcal = zeros(1,n);
 qcal = zeros(1,n);
 
@@ -104,9 +108,6 @@ for iter = 1: maxIter
             c = c + 1;
         end
         % J22
-        co = length([pqbuses pvbuses]);   % column offset for J22
-        ro = length([pqbuses pvbuses]);   % row offset for J22
-        
         for j = pqbuses
             if i ~= j
                 J(r, c) = -V(i)*Y(i,j)*sin(theta(i,j)-delta(i)+delta(j));
@@ -117,8 +118,10 @@ for iter = 1: maxIter
         end
         r = r+1;
     end
+    J
     delx = J\F;
-    r = 1;
+    delx
+    r = 1;  % Initialisation of row number for final calculation 
     for i = [pqbuses pvbuses]
         delta(i) = delta(i)+ delx(r);
         r = r+1;
@@ -133,15 +136,16 @@ for iter = 1: maxIter
     % convergence check
     if iter > 1
         if abs(max(delx)) < tol
-            fprintf('\nConverged At %d No. iteration. Tolerance: 0.00001\n',iter);
             break
         end
     end
-
 end
 
-disp([voltage.mag rad2deg(voltage.angle)]);
-
-
-
-
+% % Output Decoration for Generalized
+Iter = (1: iter)';
+T = table(Iter, voltage.mag, rad2deg(voltage.angle));
+T.Properties.VariableNames = {'Iter', 'Voltage', 'Angle_degree'};
+disp(T);
+disp('Voltage(Volt) are V1, V2, V3,... and Angle(Degree) are A1, A2, A3, ....')
+disp('All in Per-Unit');
+% Output Decoration for Generalized
