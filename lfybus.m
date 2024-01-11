@@ -1,4 +1,4 @@
-function r = ybus(A)
+function r = lfybus(A)
 n = size(A,1); % row number %  do not use length as it gives max(size(A))
 
 for i = 1: n
