@@ -15,7 +15,7 @@ pg = B(:,3);
 p =  pg - B(:,5); p = p';
 q = B(:,4) - B(:,6); q = q';
 
-tol = 0.0001; maxIter = 1;
+tol = 0.0001; maxIter = 100;
 N = size(y,1);
 
 % bus selection
@@ -102,21 +102,23 @@ for iter = 1: maxIter
         V(i) = V(i) + delx(r);
         r = r+ 1;
     end
-    delta
+    rad2deg(delta)
     V
-
+    % storing data
+    voltage.mag(iter, :) = V; voltage.angle(iter, :)= delta;
     
-    
-%     vdata(iter, :) = v;
     % convergence check
     if iter > 1
+        if abs(max(delx)) < tol
+            break
+        end
     end
     
 end
-% disp('result voltage magnitude and angle ');
-% 
-% iteration(:,1) = 1: iter;
-% t = table ( iteration, abs(vdata), rad2deg(angle(vdata)) );
-% disp(t);
 
+disp('result voltage magnitude and angle ');
+
+iteration(:,1) = 1: iter;
+t = table ( iteration, voltage.mag, rad2deg(voltage.angle) );
+disp(t);
 
