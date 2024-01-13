@@ -1,6 +1,6 @@
 % Formation of Y Bus Matrix through Matlab Code
 % Author: Helal Uzzaman Hasib
-% Date: 02 Jan 2024
+% Date: 13 Jan 2024
 
 clear;
 clc
@@ -18,7 +18,7 @@ for r = 1: n
     z(A(r, 2), A(r, 1)) = R + 1j*X;
 end
 z
-n = length(z);
+n = max(size(z));
 for r = 1: n
     for c = 1: n
         if z(r,c) == 0
@@ -29,7 +29,7 @@ end
 
 % Replace zeros with 'inf' 
 % shortcut
-% z(z == 0) = inf;
+% z(z == 0) = inf; 
 
 y = 1./z
 
@@ -41,7 +41,6 @@ for r=1:n
             y(r,r) = s(r);
         else
             y(r,c) = -y(r,c);
-            
         end
     end
 end
