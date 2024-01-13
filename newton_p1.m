@@ -2,7 +2,7 @@
 
 clear
 clc
-cd 'example_6.8'
+cd 'example_lab'
 A = xlsread('impedence_data');
 B = xlsread('bus_data');
 cd ..
@@ -90,7 +90,10 @@ for iter = 1: maxIter
     end
     
     J
-    F = [delp( [pqbuses pvbuses] ) delq(pqbuses)];
+    
+    F = [delp([pqbuses pvbuses]) delq(pqbuses)];
+    
+    
     F = F';
     delx = J\F;
     r = 1;  % initialisation of row for next assumption  calculation
