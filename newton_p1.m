@@ -2,7 +2,7 @@
 
 clear
 clc
-cd 'example_lab'
+cd 'example_6.8'
 A = xlsread('impedence_data');
 B = xlsread('bus_data');
 cd ..
@@ -57,7 +57,7 @@ for iter = 1: maxIter
         % J12
         for j = pqbuses
             if i~=j
-                J(r,c) = V(j)*Y(i,j)*cos(theta(i,j)-delta(i)+delta(j));
+                J(r,c) = V(i)*Y(i,j)*cos(theta(i,j)-delta(i)+delta(j));
             else
                 J(r,c) = pcal(i)/V(i) + V(i)*Y(i,i)*cos(theta(i,i));
             end
@@ -124,4 +124,5 @@ disp('result voltage magnitude and angle ');
 iteration(:,1) = 1: iter;
 t = table ( iteration, voltage.mag, rad2deg(voltage.angle) );
 disp(t);
+
 
