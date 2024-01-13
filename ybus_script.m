@@ -4,7 +4,7 @@
 
 clear;
 clc
-cd 'example_6.8';
+cd 'example_6.1';
 A = xlsread('impedence_data');
 disp('Given impedence data: ');
 disp(A);
