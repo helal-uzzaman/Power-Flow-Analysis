@@ -77,6 +77,16 @@ for iter= 1: maxIter
         end
     end
 end
-voltagef = [abs(voltage) rad2deg(angle(voltage))];
-disp(voltagef);
+
+volt.mag = abs(voltage);
+volt.angle = rad2deg(angle(voltage));
+
+% % Output Decoration for Generalized
+Iter = (1: iter)';
+T = table(Iter, volt.mag, rad2deg(volt.angle));
+T.Properties.VariableNames = {'Iter', 'Voltage', 'Angle_degree'};
+disp(T);
+disp('Voltage(Volt) are V1, V2, V3,... and Angle(Degree) are A1, A2, A3, ....')
+disp('All in Per-Unit');
+% Output Decoration for Generalized
 
