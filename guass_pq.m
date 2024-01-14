@@ -44,6 +44,7 @@ disp('result voltage magnitude and angle ');
 
 iteration(:,1) = 1: iter;
 t = table ( iteration, abs(vdata), rad2deg(angle(vdata)) );
+t.Properties.VariableNames = {'Iter', 'Voltage', 'Angle_degree'};
 disp(t);
 
 

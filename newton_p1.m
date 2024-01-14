@@ -77,7 +77,7 @@ for iter = 1: maxIter
             end
             c = c + 1;
         end
-        % J12
+        % J22
         for j = pqbuses
             if i~=j
                 J(r,c) = -V(j)*Y(i,j)*sin(theta(i,j)-delta(i)+delta(j));
@@ -123,6 +123,7 @@ disp('result voltage magnitude and angle ');
 
 iteration(:,1) = 1: iter;
 t = table ( iteration, voltage.mag, rad2deg(voltage.angle) );
+t.Properties.VariableNames = {'Iter', 'Voltage', 'Angle_degree'};
 disp(t);
 
 

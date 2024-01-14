@@ -28,9 +28,6 @@ pvbuses = buses(  pg > 0 & buses ~=1 )
 buses = buses'; pqbuses = pqbuses' ; pvbuses = pvbuses';
 
 for iter = 1: maxIter
-
-    
-    
     %  pv buses
     for i = pvbuses
         % Q calculation
@@ -75,6 +72,7 @@ disp('result voltage magnitude and angle ');
 
 iteration(:,1) = 1: iter;
 t = table ( iteration, abs(vdata), rad2deg(angle(vdata)) );
+t.Properties.VariableNames = {'Iter', 'Voltage', 'Angle_degree'};
 disp(t);
 
 
