@@ -83,7 +83,7 @@ volt.angle = rad2deg(angle(voltage));
 
 % % Output Decoration for Generalized
 Iter = (1: iter)';
-T = table(Iter, volt.mag, rad2deg(volt.angle));
+T = table(Iter, volt.mag, volt.angle);
 T.Properties.VariableNames = {'Iter', 'Voltage', 'Angle_degree'};
 disp(T);
 disp('Voltage(Volt) are V1, V2, V3,... and Angle(Degree) are A1, A2, A3, ....')
