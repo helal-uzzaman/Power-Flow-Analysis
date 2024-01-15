@@ -18,7 +18,7 @@ disp(A);
 
 
 % Admittance matrix or Y-bus matrix formation
-y = lfybus(A);
+y = lfybus(A);y
 n = length(y);
 
 % Y bus reduction 

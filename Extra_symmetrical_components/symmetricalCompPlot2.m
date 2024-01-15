@@ -38,7 +38,7 @@ va2 = 1/3*(v(1) + a2*v(2) + a*v(3));
 % plotting the phasor of original and symmetrical Components of the System
 vZeroSequence = [ va0     va0    va0]
 vPosSequence  = [ va1  a2*va1  a*va1]
-vNegSequence  = [ va2  a*va2  a2*va2]
+vNegSequence  = [ va2  a*va2  a^2*va2]
  
 % original matrix plotting 
 subplot(2,2,1)
