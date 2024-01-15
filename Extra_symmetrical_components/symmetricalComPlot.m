@@ -1,57 +1,44 @@
-% 
-% 
+% symmetical components for 3 phase system
 % Author: Helal Uzzaman Hasib
-% Date: 17 Dec 2023
-% ===========================================================
-
-% Clear the workspace and command window
+% Date: 15 Jan 2024
 clear
 clc
 
-V.mag(1) = 10;  V.angle(1) = 90;
-V.mag(2) =  5;  V.angle(2) = 30;
-V.mag(3) = 10;  V.angle(3) = 210;
+% system data change magnitude and angle as you wish
+va = 10* (cosd(90) + 1i*sind(90));  % cosd() sind() takes degree as input
+vb =  5* (cosd(30) + 1i*sind(30));
+vc = 10* (cosd(210) + 1i*sind(210));
+% system data change magnitude and angle as you wish
 
-A.mag = 1;      A.angle = 120;
-r = A.mag;
-theta = deg2rad(A.angle);
-a= r*(cos(theta) + 1i*sin(theta));
-a
+a = cosd(120) + 1i*sind(120);
+a2 = a^2;
 
-%  Matrix creating of original in Polar form
-for k= 1: 3
-    r = V.mag(k);
-    theta = deg2rad( V.angle(k));
-    v(k,1) = r*(cos(theta) + 1i*sin(theta));
-end
-v  % original matrix
-% creating A matrix
-AA = 1/3*[ 1  1    1;
-      1  a  a^2;
-      1 a^2   a;];
-vaComponent = AA*v
-AB = [ 1  1    1;
-       1  a^2  a;
-       1   a   a^2;];
-  
-vabcComponents= AB.*vaComponent
-% original matrix ploting 
-subplot(2,2,1)
-compass(v)
+va0 = 1/3*(va + vb + vc);
+va1 = 1/3*(va + a*vb + a2* vc);
+va2 = 1/3*(va + a2*vb + a*vc);
+
+vb0 = va0; vb1 = a2* va1; vb2 =  a*va2;
+vc0 = va0; vc1 =  a* va1; vc2 = a2*va2;
+
+subplot(2,2,1);
+compass( [va vb vc]);
 title('ORIGINAL SYSTEM')
-% gtext('SYMMETRICAL COMPONENTS')
 
-subplot(2,2,2)
-compass(vabcComponents(1,:));
+subplot(2,2,2);
+compass( [va0 vb0 vc0]);
 title('ZERO SEQUENCE')
-% gtext('SYMMETRICAL COMPONENTS')
 
-subplot(2,2,3)
-compass(vabcComponents(2,:));
+subplot(2,2,3);
+compass( [va1 vb1 vc1]);
 title('POSITIVE SEQUENCE')
-% gtext('SYMMETRICAL COMPONENTS')
 
-subplot(2,2,4)
-compass(vabcComponents(3,:));
+subplot(2,2,4);
+compass( [va2 vb2 vc2]);
 title('NEGATIVE SEQUENCE')
-% gtext('SYMMETRICAL COMPONENTS')
+
+
+
+
+
+
+
