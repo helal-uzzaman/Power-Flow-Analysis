@@ -9,7 +9,7 @@ clear
 clc
 maxIter = 100;      tol = 0.0001;
 % Data Loading from Excel File
-cd('example_6.8p');
+cd('example_6.8');
 A = xlsread('impedence_data');
 disp('Given Impedance data from Excel file: ');      disp(A);
 B = xlsread('bus_data');

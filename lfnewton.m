@@ -9,7 +9,7 @@ clear
 clc
 maxIter = 20;      tol = 0.0001;
 % Data Loading from Excel File
-problem = 'example_6.8';
+problem = 'example_6.8p';
 fprintf('Given problem -->  "%s": \n', problem)
 cd(problem);
 A = xlsread('impedence_data');
